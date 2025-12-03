@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">Novo Problema</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3 class="mb-3">Meus Chamados</h3>
+        {% for problema in problemas %}
+            <div class="card mb-3 border-start border-4 {% if problema.status == 'CONCLUIDO' %}border-success{% else %}border-warning{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ problema.modelo_carro }} - {{ problema.titulo }}</h5>
+                    <p class="card-text">{{ problema.descricao }}</p>
+                    <span class="badge {% if problema.status == 'ABERTO' %}bg-danger{% elif problema.status == 'ANDAMENTO' %}bg-warning{% else %}bg-success{% endif %}">
+                        {{ problema.get_status_display }}
+                    </span>
+                    {% if problema.imagem %}
+                        <div class="mt-2"><img src="{{ problema.imagem.url }}" alt="Imagem do problema" class="img-fluid rounded" style="max-width:200px;"></div>
+                    {% endif %}
+                    <div class="mt-2">
+                        {% if problema.oficina %}
+                            <span class="text-success fw-bold">Oficina interessada: {{ problema.oficina.username }}</span>
+                        {% else %}
+                            <span class="text-secondary">Nenhuma oficina interessada ainda.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Nenhum problema registrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

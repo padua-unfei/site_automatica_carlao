@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Painel da Oficina</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4 class="text-primary">Disponíveis para Pegar</h4>
+        {% for problema in problemas_abertos %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ problema.modelo_carro }}</h5>
+                    <p class="card-text">{{ problema.descricao }}</p>
+                    <p class="text-muted"><small>Cliente: {{ problema.cliente.username }}</small></p>
+                    <a href="{% url 'pegar_servico' problema.pk %}" class="btn btn-outline-primary btn-sm">Pegar Serviço</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>Não há novos chamados no momento.</p>
+        {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+        <h4 class="text-success">Meus Serviços em Andamento</h4>
+        {% for servico in meus_servicos %}
+            <div class="card mb-3 border-success">
+                <div class="card-body">
+                    <h5 class="card-title">{{ servico.modelo_carro }} - {{ servico.titulo }}</h5>
+                    <p>Status atual: <strong>{{ servico.get_status_display }}</strong></p>
+                    {% if servico.status != 'CONCLUIDO' %}
+                        <a href="{% url 'concluir_servico' servico.pk %}" class="btn btn-success btn-sm">Marcar como Concluído</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p>Você não tem serviços ativos.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
